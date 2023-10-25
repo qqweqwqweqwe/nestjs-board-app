@@ -50,7 +50,11 @@ export class BoardsService {
 
   deleteBoard(id: string):void{
     // id가 다른 게시물만 남겨준다는 의미임
-    this.boards = this.boards.filter((board)=> board.id!==id)
+
+    // 이렇게 해주면 없을때 알아서 에러 던졎ㅁ
+    const found = this.getBoardById(id)
+
+    this.boards = this.boards.filter((board)=> board.id!==found.id)
   }
 
   updateBoardStatus(id :string, status:BoardStatus):Board{
