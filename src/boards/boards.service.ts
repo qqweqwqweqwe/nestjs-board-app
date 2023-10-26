@@ -4,6 +4,7 @@ import { CreateBoardDto } from './dto/create-board.dto';
 import { BoardRepository } from './board.repository';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Board } from './board.entity';
+import { BoardStatus } from './board.status.enum';
 
 @Injectable()  // 이 데코레이션을 사용함으로써 다른곳에서 보드서비스 접근 가능, 즉 어플리케이션 전체에서 사용 가능 
 export class BoardsService {
@@ -23,7 +24,9 @@ export class BoardsService {
   // getAllboards() : Board[] { // 여기의 Board[]는 return 값이 Board[]라는 의미임
   //   return this.boards;
   // }
-
+async createBoard(createBoardDto : CreateBoardDto): Promise<Board>{  // async의 return값은 프로미즈(복습한내용)
+  return this.boardRepository.createBoard(createBoardDto)
+}
   // createBoard(createBoardDto : CreateBoardDto){
   //   // const title  = createBoardDto.title
   //   // const description = createBoardDto.description
