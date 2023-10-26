@@ -69,6 +69,15 @@ async createBoard(createBoardDto : CreateBoardDto): Promise<Board>{  // async의
 
   // }
 
+  async deleteBoard(id :number ) :Promise<void>{
+    const result =await this.boardRepository.delete(id) //  db에서 id값의 게시물을 삭제해줌, 없으면 아무일도 일어나지 않음
+    
+    if (result.affected===0){
+      throw new NotFoundException(`can't find board with id ${id}`)
+    }
+    
+  }
+
   // deleteBoard(id: string):void{
   //   // id가 다른 게시물만 남겨준다는 의미임
 
@@ -77,7 +86,15 @@ async createBoard(createBoardDto : CreateBoardDto): Promise<Board>{  // async의
 
   //   this.boards = this.boards.filter((board)=> board.id!==found.id)
   // }
+  async updateBoardStatus(id :number, status:BoardStatus):Promise<Board>{
+    const board = await this.getBoardById(id)
 
+
+    board.status=status
+    await this.boardRepository.save(board)
+
+    return board
+  }
   // updateBoardStatus(id :string, status:BoardStatus):Board{
   //   const board = this.getBoardById(id)
   //   board.status = status;
