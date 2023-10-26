@@ -14,10 +14,10 @@ export class BoardsController {
   // // }
   // // 위 방식처럼 해도 되지만 이렇게 해도됨, 보드서비스 주입
   // constructor(private boardService : BoardsService){}
-  // @Get()
-  // getAllBoard() : Board[]{
-  // return this.boardService.getAllboards()
-  // }
+  @Get()
+  getAllBoard() : Promise <Board[]>{
+  return this.boardService.getAllBoards()
+  }
 
   // @Post()
   // @UsePipes(ValidationPipe) // 유효성 검사 파이프 추가 (데코레이션 레벨)
@@ -57,7 +57,7 @@ export class BoardsController {
   // // param과 body의 차이는 param은 주소에 포함된 변수를 담고, body는 json등에 포함된 변수를 담는다
   @Patch('/:id/status')
   updateBoardStatus(
-    @Param('id',ParseIntPipe) id:number,
+    @Param('id',ParseIntPipe) id:number, // 파이프 추가
     @Body('status', BoardStatusvalidationPipe) status:BoardStatus  // status만 유효성 검사 해주는 것임
   ){
     return this.boardService.updateBoardStatus(id,status)

@@ -20,6 +20,10 @@ export class BoardsService {
   // // 뒤에 Bord[] 가 의미하는 것은 저 배열이 Board배열임을 명시해주기 위함임
   
 
+  async getAllBoards() : Promise<Board[]>{
+    return this.boardRepository.find() // 모든 게시물 가져오는 것
+  }
+
   // // 모든 게시물들 가져오는 함수
   // getAllboards() : Board[] { // 여기의 Board[]는 return 값이 Board[]라는 의미임
   //   return this.boards;
@@ -72,7 +76,7 @@ async createBoard(createBoardDto : CreateBoardDto): Promise<Board>{  // async의
   async deleteBoard(id :number ) :Promise<void>{
     const result =await this.boardRepository.delete(id) //  db에서 id값의 게시물을 삭제해줌, 없으면 아무일도 일어나지 않음
     
-    if (result.affected===0){
+    if (result.affected===0){ // 영향을 준것이 0이라는 것은 해당 게시글이 없다는 소리, 즉 에러 throw
       throw new NotFoundException(`can't find board with id ${id}`)
     }
     
