@@ -1,4 +1,5 @@
-import { BaseEntity, Column, Entity, PrimaryGeneratedColumn } from "typeorm";
+import { User } from "src/auth/user.entity";
+import { BaseEntity, Column, Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
 @Entity()
 export class Board extends BaseEntity{
   // 기본키라는 의미임
@@ -13,4 +14,8 @@ export class Board extends BaseEntity{
 
   @Column()
   status : string
+
+  @ManyToOne(type=>User, user=>user.boards, {eager:false})
+  user:User
+
 }
