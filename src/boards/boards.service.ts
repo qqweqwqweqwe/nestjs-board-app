@@ -13,6 +13,7 @@ export class BoardsService {
 
   constructor(
     // 이제부터 서비스 안에서 board repository 사용 가능
+    // 리포지토리 의존성 주입
     @InjectRepository(BoardRepository)
     private boardRepository : BoardRepository,
 
@@ -25,7 +26,8 @@ export class BoardsService {
   async getAllBoards(
     user:User
   ) : Promise<Board[]>{
-    const query = this.boardRepository.createQueryBuilder('board'); // 보드 테이블에 대해서 작성할 쿼리 생성
+    // 보드 테이블에 대해서 쿼리 작성할 기반을 만드는 것
+    const query = this.boardRepository.createQueryBuilder('board');
 
     query.where('board.userId = :userId', {userId:user.id}) // 게시글작성자가 유저 아이디랑 같은지
 
@@ -35,54 +37,21 @@ export class BoardsService {
     return boards
   }
 
-  // // 모든 게시물들 가져오는 함수
-  // getAllboards() : Board[] { // 여기의 Board[]는 return 값이 Board[]라는 의미임
-  //   return this.boards;
-  // }
-async createBoard(createBoardDto : CreateBoardDto, user:User): Promise<Board>{  // async의 return값은 프로미즈(복습한내용)
+
+  async createBoard(createBoardDto : CreateBoardDto, user:User): Promise<Board>{  // async의 return값은 프로미즈(복습한내용)
   return this.boardRepository.createBoard(createBoardDto,user)
 }
-  // createBoard(createBoardDto : CreateBoardDto){
-  //   // const title  = createBoardDto.title
-  //   // const description = createBoardDto.description
-
-  //   //근데 위랑 아래랑 같다 아래가 더 편하니까 아래처럼 ㄱ
-  //   const {title,description} = createBoardDto
-  //     const board={
-  //       id : uuid(),  // 이제는 유니크한 값을 아이디로 줄 수 있음
-  //       title :title,
-  //       description : description,
-  //       status:BoardStatus.PUBLIC
-  //     }
-  //   this.boards.push(board) // 새로운 게시물을 넣어줌
-  //   return board;
-  // }
  
   async getBoardById(id:number):Promise <Board>{
-    const found = await this.boardRepository.findOne(id)
-    
+    const found = await this.boardRepository.findOne(id) // 주어진 id에 해당하는 데이터 검색
     if(!found){
       throw new NotFoundException(`can't find Board With id ${id}`)
     }
-
     return found
-
   } 
 
-  // // 서비스를 먼저 구현한 후 컨트롤러로 옮기는것
+  // 서비스를 먼저 구현한 후 컨트롤러로 옮기는것
   
-  // getBoardById(id :string):Board{
-  //   // boards안에서 보드의 id와 매개변수 id가 같은 보드를 찾는것 
-  //   const found =this.boards.find((board) => board.id===id); 
-
-
-  //   if (!found){ // 만약에 없다면 예외 throw
-  //     throw new NotFoundException(`Can't find board witg id ${id} `); // 오류 메세지 출력
-  //   }
-
-  //   return found 
-
-  // }
 
   async deleteBoard(id :number, user:User ) :Promise<void>{
     const result =await this.boardRepository.delete({id,user}) //  db에서 id값의 게시물을 삭제해줌, 없으면 아무일도 일어나지 않음
@@ -93,26 +62,16 @@ async createBoard(createBoardDto : CreateBoardDto, user:User): Promise<Board>{  
     
   }
 
-  // deleteBoard(id: string):void{
-  //   // id가 다른 게시물만 남겨준다는 의미임
-
-  //   // 이렇게 해주면 없을때 알아서 에러 던졎ㅁ
-  //   const found = this.getBoardById(id)
-
-  //   this.boards = this.boards.filter((board)=> board.id!==found.id)
-  // }
   async updateBoardStatus(id :number, status:BoardStatus):Promise<Board>{
     const board = await this.getBoardById(id)
 
 
     board.status=status
     await this.boardRepository.save(board)
-
+    // save 메서드는 해당 id가 있으면 게시물을 업데이트한다.
+    // 즉 save를 한번 더 호출한다고 상태가 다른 같은 게시물 두개가
+    // 저장되는것이 아니다.
+    
     return board
   }
-  // updateBoardStatus(id :string, status:BoardStatus):Board{
-  //   const board = this.getBoardById(id)
-  //   board.status = status;
-  //   return board
-  // }
 }
