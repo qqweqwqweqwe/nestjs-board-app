@@ -8,6 +8,7 @@ import { BoardsService } from './boards/boards.service';
 import { AuthModule } from './auth/auth.module';
 
 @Module({
+  // 모듈이 의존하는 다른 모듈을 나타냄
   imports: [
     TypeOrmModule.forFeature([BoardRepository]),
     AuthModule,  

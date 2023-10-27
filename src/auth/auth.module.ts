@@ -11,7 +11,7 @@ import { JwtStrategy } from './jwt.strategy';
   imports:[
     PassportModule.register({defaultStrategy : 'jwt'}),
     JwtModule.register({
-      secret:'Secret1234', // 더해주는 시크릿 텍스트
+      secret:'Secret1234', // 더해주는 시크릿 텍스트, jwt를 위한 비밀 키 설정
       signOptions:{
         expiresIn : 60*60 // 토큰을 어느정도 유효하게 해줄건지 (1시간)
       }

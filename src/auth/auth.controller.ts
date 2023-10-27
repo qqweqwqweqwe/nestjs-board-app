@@ -13,12 +13,16 @@ export class AuthController {
   // 회원가입 기능
   @Post('/signup')
   // validationpipe는 유효성 조건에 맞는지 체크해주기 위해
+  // 저 파이프가 추출한 데이터인 authcredentialdto에 대해서 유효성 검사를 시행해줌
+  // 유효성 검사를 통과한 데이터는 authcredentialdto에 저장됨
   signUp(@Body(ValidationPipe) authCredentialDto : AuthCredentialDto) : Promise<void>{
     return this.authService.signUp(authCredentialDto)
   }
 
+  //로그인
   @Post('/signIn')
   signIn(@Body(ValidationPipe) authCredentialDto : AuthCredentialDto) : Promise<{accessToken : string}>{
+    // 로그인 성공 시 토큰 반환
     return this.authService.signIn(authCredentialDto)
   }
 
