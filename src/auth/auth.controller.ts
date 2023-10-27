@@ -2,6 +2,8 @@ import { Body, Controller, Post, Req, UseGuards, ValidationPipe } from '@nestjs/
 import { AuthService } from './auth.service';
 import { AuthCredentialDto } from './dto/auth-credential.dto';
 import { AuthGuard } from '@nestjs/passport';
+import { Getuser } from './get-user.decorator';
+import { User } from './user.entity';
 
 @Controller('auth')
 export class AuthController {
@@ -21,10 +23,9 @@ export class AuthController {
   }
 
   @Post('/test')    // 이거 실행해서 확인하면 user객체를 확인할 수 없음
-
   @UseGuards(AuthGuard()) // 근데 이젠 확인할 수 있음
-  test(@Req() req){
-    console.log('req', req)
+  test(@Getuser() user :User){ // 만들어준 커스텀 데코레이터 사용
+    console.log('user', user)
     // 이떄 사용하는 것이 useguards--> 인증 미들웨어라고 보면됨
     // 우리가 pipe를 유효성 검사하는 미들웨어로 썻듯이 ㅇㅇ
   }
