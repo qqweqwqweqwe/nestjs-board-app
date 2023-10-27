@@ -1,11 +1,15 @@
-import { Body, Controller,Get, Param, ParseIntPipe, Post, UsePipes, ValidationPipe,Delete, Patch } from '@nestjs/common';
+import { Body, Controller,Get, Param, ParseIntPipe, Post, UsePipes, ValidationPipe,Delete, Patch, UseGuards } from '@nestjs/common';
 import { BoardsService } from './boards.service';
 import { Board } from './board.entity';
 import { CreateBoardDto } from './dto/create-board.dto';
 import { BoardStatus } from './board.status.enum';
 import { BoardStatusvalidationPipe } from './pipes/board-status-validation.pipes';
+import { AuthGuard } from '@nestjs/passport';
+import { Getuser } from 'src/auth/get-user.decorator';
+import { User } from 'src/auth/user.entity';
 
-@Controller('boards') 
+@Controller('boards')
+@UseGuards(AuthGuard()) // 컨트롤러 레벨로 주면 밑에있는 핸들러들 전부 영향 , 이제 토큰 없으면 게시판 활용 ㄴㄴ
 export class BoardsController {
   constructor (private boardService : BoardsService){}
   
@@ -15,8 +19,10 @@ export class BoardsController {
   // // 위 방식처럼 해도 되지만 이렇게 해도됨, 보드서비스 주입
   // constructor(private boardService : BoardsService){}
   @Get()
-  getAllBoard() : Promise <Board[]>{
-  return this.boardService.getAllBoards()
+  getAllBoard(
+    @Getuser() user:User
+  ) : Promise <Board[]>{
+  return this.boardService.getAllBoards(user)
   }
 
   // @Post()
@@ -30,8 +36,9 @@ export class BoardsController {
 
   @Post()
   @UsePipes(ValidationPipe)
-  createBoard(@Body() CreateBoardDto : CreateBoardDto) : Promise<Board>{
-    return this.boardService.createBoard(CreateBoardDto)
+  createBoard(@Body() CreateBoardDto : CreateBoardDto,
+    @Getuser() user:User ) : Promise<Board>{ // 이제 게시글 작성할때 유저 정보까지 같이 넘겨줄거임
+    return this.boardService.createBoard(CreateBoardDto,user)
   }
 
   @Get("/:id")
@@ -45,8 +52,11 @@ export class BoardsController {
   // }
 
   @Delete('/:id')
-  deleteBoard(@Param('id', ParseIntPipe) id) : Promise<void> {
-    return this.boardService.deleteBoard(id) 
+  deleteBoard(@Param('id', ParseIntPipe) id,
+  @Getuser() user:User // 유저 정보 가져오기
+  // 자신이 생성한 게시물을 삭제
+  ) : Promise<void> {
+    return this.boardService.deleteBoard(id,user) 
   }
 
   // @Delete('/:id')
